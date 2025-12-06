@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "Rock Paper Scissors Final Portfolio"
+  title: "E155 Final Portfolio"
   navbar:
     left:
       - href: index.qmd
@@ -11,16 +11,14 @@ website:
         text: About
       - href: introduction.qmd
         text: Introduction
-      - href: overalldesign.qmd
-        text: Overall Design
       - href: mcu.qmd
         text: MCU
       - href: fpga.qmd
         text: FPGA
-      - href: additionals.qmd
-        text: Additionals
       - href: results.qmd
         text: Results
+      - href: additionals.qmd
+        text: Additionals
 
 format:
   html:

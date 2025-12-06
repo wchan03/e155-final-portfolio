@@ -3,7 +3,7 @@ title: Team
 format:
   html:
     toc: true
-    toc-location: left
+    toc-location: right
     number-sections: false
 ---
 # Meet the Team
@@ -27,8 +27,11 @@ format:
 
 .headshot img {
   border-radius: 50%;
-  width: 200px;
-  height: 200px;
+  width: 200px;       /* Controls the size */
+  height: auto;       /* Keeps proportions correct */
+  aspect-ratio: 1/1;  /* Ensures the image displays as a circle */
+  object-fit: cover;  /* Crops the image nicely without distortion */
+  object-position: center 5%;
   margin-bottom: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -53,7 +56,7 @@ format:
 
   <div class="team-member">
     <div class="headshot">
-      <img src="images/bella.jpeg" alt="Bella Hottenrott Headshot">
+      <img src="images/bella.jpg" alt="Bella Hottenrott Headshot">
     </div>
     <div class="bio">
       <h3>Bella Hottenrott</h3>
@@ -62,7 +65,7 @@ format:
         <a href="https://github.com/Isabella-Hottenrott/">GitHub</a>
         <a href="https://isabella-hottenrott.github.io/hmc-e155-portfolio/">E155 Website</a>
       </div>
-      <p>Bella is a senior engineering student, focusing in electrical and computer engineering. She enjoys the intersection between hardware and digital design.</p>
+      <p>Bella is a senior engineering student, focusing in electrical and computer engineering. She enjoys the intersection between hardware and digital design and has loved her time enrolled in MicroPs.</p>
     </div>
   </div>
 
@@ -70,14 +73,14 @@ format:
 
   <div class="team-member">
     <div class="headshot">
-      <img src="images/wava.png" alt="Wava Chan Headshot">
+      <img src="images/headshot_wchan.jpg" alt="Wava Chan Headshot">
     </div>
     <div class="bio">
       <h3>Wava Chan</h3>
       <div class="social-links">
-        <a href="https://www.linkedin.com">LinkedIn</a>
+        <a href="https://www.linkedin.com/in/wava-chan-b2b894215/">LinkedIn</a>
         <a href="https://github.com/wchan03">GitHub</a>
-        <a href="https://isabella-hottenrott.github.io/hmc-e155-portfolio/">E155 Website</a>
+        <a href="https://wchan03.github.io/e155Website/">E155 Website</a>
       </div>
       <p>Wava Chan just graduated from Harvey Mudd College with a degree in engineering. She is interested in firmware and hardware development, and embedded systems. She really enjoyed this project, even through the late nights, and was very excited when the LCD screen worked!</p>
     </div>

@@ -10,6 +10,19 @@ Thank you to everyone who made this project possible-- Prof Spencer, for his unw
 
 We would also like to thank our classmates, who were always around to help us out when we needed it, throughout the semseter and during the final project. 
 
-# References
-
 # AI Use
+
+Bella mostly used AI for:
+
+- Understanding error messages
+- Writing small snippets of code
+- Implementation ideation
+
+In this course she has found AI to be useful in these ways. She has personally often found that giving LLMs too broad of an implementation, or making them responsible for too much specificity is unhelpful. In reflection, however, she thinks she could have saved more time on this project by using AI.
+
+Wava mostly used AI for:
+
+- Understanding the API
+- Developing canonical RTL for the LCD
+
+She found AI to be useful in providing a framework for the FPGA communication to the LCD, since the initialization process is easier done and understood over an MCU.

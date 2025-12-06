@@ -4,28 +4,34 @@ Author: "Wava Chan & Isabella Hottenrott"
 format: html
 ---
 
-# LiDAR
+# MCU Components
 
-## Hardware
-
-Our second major piece of new hardware was the VL53L0X ToF sensors, which use LiDAR to read distances of up to 2 meters. 
-
-We used the HiLetGo breakout boards from Amazon, which nicely housed the VL53L0Xs, and allowed us to easily connect to the pin, including the I2C SCK, SDA, and XSHUT pins, as well as the Vcc and GND pins. We used I2C to communicate with the sensors. 
-
-We did frequently run into issues with the continued operation of the VL53L0X sensors– they proved fairly temperamental and frequently returned errors indicating difficulty reading the return signal. We weren’t sure if this was due to the light conditions of the lab, but they persisted even in other spaces. However, we purchased extras in case of this occurring, allowing us to continue our work. 
+In this project, the STM32L432KC MCU board was used. The two major comopnents on the MCU included I2C communication, initialization and reading the LiDAR sensors, SPI communication, and sequencing the game.
 
 
 ## I2C
 
-The VL53L0X sensors use I2C protocol to communicate. Thus, we had to use the I2C peripherals present on the STM32L432KC MCU. We wrote init_i2c1() , read_i2c1(), and write_i2c2() functions, which were enough to accomplish what we needed. We hadn’t used the I2C peripherals previously in the course, so we were able to gain a good understanding through this project. 
+The VL53L0X sensors use I2C protocol to communicate. Thus, the I2C1 peripheral on the MCU was implemented. Basic functions for the communication were written, such as init_i2c1() , read_i2c1(), and write_i2c2().
 
-Through our research, we found a git repository (found here [INSERT LINK HERE]) that contained a great deal of code for the VL53L0X sensors, by [INSERT NAME HERE]. This was adapted from the provided API for the VL53L0X. Using this code was incredibly useful, as many of the initialization functions and setting functions involve writing many values to many registers. 
+Research uncovered a [git repository](https://github.com/MarcelMG/VL53L0X-STM32F103) that contained code for the VL53L0X sensors, using a different STM32 family. This code was adapted from the provided API for the VL53L0X, simplifying and providing access to the major features of the sensor, while taking out uncommon and unnecessary configurations and commands. After attempting to work directly with the API at register level, using this repository became the clear better choice for the purposes of this design.
 
-We initially tried to use the API, as suggested by the user manual, but it proved difficult to adapt to our uses and space limitations. Since we were using pretty simple commands, we were able to much more easily adapt the code as mentioned above. 
-
-Upon startup, each sensor had to be initialized, then its individual address set (using the XSHUT pin), to allow for multiple sensors to be used at once. Then, we simply had to command the sensor to measure a distance and send us the data every time a new round was started.
+Upon startup, each sensor was time-multiplexed via the XSHUT pin to set a unique address for simultaneous communication on the SDA bus. An initialization protocol was then followed for each sensor. From there, a command could be sent to the sensors to measure distances every new round.
 
 
-# SPI
+## LiDAR
 
-Write more later
+A major new hardware component were the VL53L0X ToF sensors, which use LiDAR to read distances of up to 2 meters. 
+
+The HiLetGo breakout boards were used to house the sensors and provide easier connection to the pins, including those for I2C communication, which was used to retrieve distance measurements.
+
+Throughout development, issues with the VL53L0X modules were encountered. Whenever more than four sensors were implemented at a time, at least one failed to return valid distance readings, producing error codes. In the end, the design was constrained to this number of sensors for gesture processing.
+
+
+## SPI
+
+This design attempted unidirectional SPI communication from the MCU to the FPGA. For the purposes of producing a result on demo day, this was replaced by parallel communication due to bugs related to the rates at which data was processed on different ends of the design. However, SPI communciation between the two boards was used and proven successful during the midpoint check in, when tight timing was not a constraint.
+
+
+## Game Flow
+
+The flow of the game was directed by the MCU. This came in the form of sequencing the different screen signals and placing different delays between the stages of the game, allowing users to play at a normal pace.
