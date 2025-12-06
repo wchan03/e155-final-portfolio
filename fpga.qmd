@@ -6,34 +6,50 @@ format: html
 
 # Reading SPI & Data Interpretation
 
+SPI Reception:
+To read the signals sent to the FPGA by the MCU, we designed a module to read the serial SPI transaction and output the transacted byte as a packaged 8-bit signal on the 9th clock cycle of the transaction. A synchronizer then synchronized the data onto the clock of the FPGA.  
+
+Data Interpretation:
+Data from the MCU was grouped into two groups- signals dictating a new screen to be displayed, and signals meant to be interpreted for computation of the game state. The selection of where data in the FPGA was sent to was done by the MCUMux. If the signal in question was to display a new screen, the data was routed to a decoder that pulled the correct message from memory. If the signal in question was to interpret the gesture data, the data was routed to modules that interpreted the game and precalculated the next game using game logic.
+
+
 # Game Logic
 
-A collection of modules in the FPGA were designed to perform Game Theory outlined from a study [https://arxiv.org/pdf/1404.5199v1]. The game theory decisions depend on the result {win, lose, tie}  of the previous round, as well as what move the user made {rock, paper, scissors}. 
+The game logic for this project was optionally _attached_ to a collection of modules in the FPGA. The game theory decisions were derived from a [study](https://arxiv.org/pdf/1404.5199v1) conducted in competition phenomena. The game theory decisions depend on the result {win, lose, tie}  of the previous round, as well as what move the user previously made {rock, paper, scissors}. Therefore, these pieces of information had to be encoded as bits of state into the game. When the user’s game choice is reported, the game logic immediately determines the winner of the game, comparing the precomputed computer move with the user move sent from the LiDAR, and simultaneously precalculates the next computer move. This calculation does not need to rely on any of the current information, because we assume perfect, hidden information.
 
-Therefore, these pieces of information had to be encoded as bits of state into the game. When the user’s game choice is reported, the game logic immediately determines the winner of the game and precalculates the next computer move. This calculation does not need to rely on any of the current information, because we assume perfect, hidden information.
+The game logic was tested with a testbench and passed for the cases.
+
+![](images/gametheory_proof.png)
+
 
 # LCD
 
+We implemented a 20x2 LCD, which allowed us to display messages of up to 40 characters. We needed to display 11 various messages, the data of which was retrieved using a messages.sv submodule. 
+To control the LCD, we wrote a lcd_driver module to drive the 11 input pins. This module used an FSM to step through all the various initialization steps, write the desired message to the LCD screen, and retrieve the necessary data from the internal EBR on the FPGA. 
+
+![](images/lcd_driver_fsm.png)
+
+To keep track of when a new message needed to be written, we kept track of the screen and the previous screen. When the previous screen did not match the current screen, then the command for the cursor to be sent back to the beginning of the screen was asserted, and the display was cleared before the new message was written. (This is not made clear in the FSM diagram above). Otherwise, the FPGA continuously looped through the messages, sending each character over and over again. Since each message was 20 characters long, this appeared as though the same message was statically displayed. 
+Additionally, many of the states needed a wait period, to allow the LCD to initialize properly. We created a counter that decremented on every clock cycle, allowing us to determine lengths of time on the FPGA. The max counter value was set in the state before the _WAIT states, and then the _WAIT states would be held until the counter reached 0 again
+
 ## Hardware
 
-
 The LCD was connected to the FPGA with 11 pins– 8 pins for the data bus (DB [7:0]), and 3 pins for the signals of enable (en), read/write (rw, for internal ROM), and the data select (rs). The backlight for the LCD was powered by 5V, and the character contrast was determined by a variable voltage determined by a potentiometer. 
-
 After the initialization and command sequences, the LCD will display a character corresponding to the ASCII code communicated over the DB pins. 
-
 
 ## Memory
 
 We needed to write a total of 11 different messages to the LCD. The exact data was formatted in a series of 20 ASCII characters, each of which was represented by 2 hex digits, totalling to 40 bytes or 160 bits. Though it would have been possible to store these values directly in the RTL code, it was more interesting to integrate use of the EBRs, or embedded block RAM, provided by the FPGA. 
-
-To initialize this function, we used the IP Blocks provided by the Lattice Radiant software. This allowed us to program the exact memory size we needed (160 x 11), once we had determined the amount of data per message (160 bytes), and how many messages we were planning to store (11). Then, it was simple to retrieve each word from the EBR by simply inputting the message address.
-
+To initialize this function, we used the IP Blocks provided by the Lattice Radiant software. This allowed us to program the exact memory size we needed (160 x 11), once we had determined the amount of data per message (160 bytes), and how many messages we were planning to store (11). Then, it was simple to retrieve each word from the EBR by simply inputting the message address. 
 To store all these messages in memory, we wrote a .mem file using a simple python script, and then uploaded the .mem file to the same IP Block we configured above. 
 
-[INSERT SS OF CONFIG HERE?]
+![](images/ebr_config.png)
+
+This was tested, as seen in the below waveform, and produced the messages from memory as we intended. 
+![](images/messages_waveform.png)
+![](images/messages_proof.png)
 
 Each line corresponds to a message address, where the first message is at address 0, the second message is at address 1, and so on. We made each message be exactly 160bits, where we wrote the ASCII value of the character we wanted to write, and padded out any extra room with 0x20, which means an empty space. 
+	The main memory module took in a message address (0-10, mapping to each of our messages), and a character index, indicating which character to be written in that moment, allowing us to access the entire body of messages. 
 
-	The main memory module took in a message address (0-10, mapping to each of our messages), and a character index, indicating which character 
-
-
+	Using the EBR ROM provided us with a new way to use the FPGA, as we hadn’t analyzed or dealt with writing to memory previously in E155. 

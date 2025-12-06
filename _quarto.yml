@@ -7,7 +7,20 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: about.qmd
+        text: About
+      - href: introduction.qmd
+        text: Introduction
+      - href: overalldesign.qmd
+        text: Overall Design
+      - href: mcu.qmd
+        text: MCU
+      - href: fpga.qmd
+        text: FPGA
+      - href: additionals.qmd
+        text: Additionals
+      - href: results.qmd
+        text: Results
 
 format:
   html:
