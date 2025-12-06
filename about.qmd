@@ -1,0 +1,15 @@
+---
+title: "About Us"
+---
+
+---
+title: "Wava Chan"
+about:
+  id: wava-heading
+  template: jolla
+  image: images/wava.jpg
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com
+---

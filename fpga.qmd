@@ -1,0 +1,39 @@
+---
+Title: "FPGA"
+Author: "Wava Chan & Isabella Hottenrott"
+format: html
+---
+
+# Reading SPI & Data Interpretation
+
+# Game Logic
+
+A collection of modules in the FPGA were designed to perform Game Theory outlined from a study [https://arxiv.org/pdf/1404.5199v1]. The game theory decisions depend on the result {win, lose, tie}  of the previous round, as well as what move the user made {rock, paper, scissors}. 
+
+Therefore, these pieces of information had to be encoded as bits of state into the game. When the user’s game choice is reported, the game logic immediately determines the winner of the game and precalculates the next computer move. This calculation does not need to rely on any of the current information, because we assume perfect, hidden information.
+
+# LCD
+
+## Hardware
+
+
+The LCD was connected to the FPGA with 11 pins– 8 pins for the data bus (DB [7:0]), and 3 pins for the signals of enable (en), read/write (rw, for internal ROM), and the data select (rs). The backlight for the LCD was powered by 5V, and the character contrast was determined by a variable voltage determined by a potentiometer. 
+
+After the initialization and command sequences, the LCD will display a character corresponding to the ASCII code communicated over the DB pins. 
+
+
+## Memory
+
+We needed to write a total of 11 different messages to the LCD. The exact data was formatted in a series of 20 ASCII characters, each of which was represented by 2 hex digits, totalling to 40 bytes or 160 bits. Though it would have been possible to store these values directly in the RTL code, it was more interesting to integrate use of the EBRs, or embedded block RAM, provided by the FPGA. 
+
+To initialize this function, we used the IP Blocks provided by the Lattice Radiant software. This allowed us to program the exact memory size we needed (160 x 11), once we had determined the amount of data per message (160 bytes), and how many messages we were planning to store (11). Then, it was simple to retrieve each word from the EBR by simply inputting the message address.
+
+To store all these messages in memory, we wrote a .mem file using a simple python script, and then uploaded the .mem file to the same IP Block we configured above. 
+
+[INSERT SS OF CONFIG HERE?]
+
+Each line corresponds to a message address, where the first message is at address 0, the second message is at address 1, and so on. We made each message be exactly 160bits, where we wrote the ASCII value of the character we wanted to write, and padded out any extra room with 0x20, which means an empty space. 
+
+	The main memory module took in a message address (0-10, mapping to each of our messages), and a character index, indicating which character 
+
+

@@ -1,0 +1,15 @@
+---
+Title: "Additional Reading"
+Author: "Wava Chan & Isabella Hottenrott"
+format: html
+---
+
+# Acknowledgements
+
+Thank you to everyone who made this project possible-- Prof Spencer, for his unwavering support and advice. Xavier, for providing much-needed debugging help. We would like to thank the E155 TAs-- Kavi Dey, Troy Kaufman, Vikram Krishna, who all helped us out at one point or another. 
+
+We would also like to thank our classmates, who were always around to help us out when we needed it, throughout the semseter and during the final project. 
+
+# References
+
+# AI Use

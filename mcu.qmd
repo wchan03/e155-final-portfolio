@@ -1,0 +1,11 @@
+---
+Title: "Overall Design"
+Author: "Wava Chan & Isabella Hottenrott"
+format: html
+---
+
+# LiDAR
+
+## I2C
+
+# SPI
